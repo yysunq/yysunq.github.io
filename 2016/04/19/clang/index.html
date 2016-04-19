@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="随心 随笔"><title>代码检查工具-Clang Static Analyzer | 一晌贪欢</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/3.0.3/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">代码检查工具-Clang Static Analyzer</h1><a id="logo" href="/.">一晌贪欢</a><p class="description">随心 随笔</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">代码检查工具-Clang Static Analyzer</h1><div class="post-meta">Apr 19, 2016<script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> Hits</span></span></div><div class="post-content"><p>####安装</p>
+<ul>
+<li>极其痛苦，因为Linux机器在内网，不能上外网，所有包都要手动编译安装…</li>
+<li>涉及到的命令<ul>
+<li>df -H</li>
+<li>find / -name april*   </li>
+<li>tar -zxvf –解tar.gz包</li>
+<li>tar -jxvf –解tar.bz2包</li>
+<li>ln -s yy zz –将档案 yy 产生一个 symbolic link : zz</li>
+<li>free</li>
+<li>whereis  </li>
+</ul>
+</li>
+<li>需要的包<ul>
+<li>Python-2.7.11</li>
+<li>升级gcc,原机是gcc-4.4.6,编clang编不过。<ul>
+<li>在外网机上下载gcc-4.9.3.tar.gz</li>
+<li>tar -zxvf gcc-4.9.3.tar.gz</li>
+<li>cd gcc-4.9.3</li>
+<li>在外网linux服务器上执行./contrib/down_prerequisites 会自动下3个包，因为最终要拷贝到内网安装，所以这里改一下down_prerequisites脚本，只下载解压，不执行make，下载解压完重新对gcc-4.9.3目录打tar.gz包压缩，拷贝到内网后手动执行这3个包的make make install再build gcc。<ul>
+<li>注意这三个包的安装顺序，先mpfr,再gmp，最后mpc</li>
+<li>mpfr直接./configure make make install 安装到/usr/local/lib下.<ul>
+<li>find / -name libmpfr.* 找到后依次用ln -s 命令替换到/usr/local/lib下。注意删除/usr/lib64下libmpfr.a库。</li>
+</ul>
+</li>
+<li>gmp ./configure make make install 安装到/usr/local/</li>
+<li>mpc ./configure make make install 安装到/usr/local/</li>
+<li>建立gmp.h文件软链接 mv /usr/include/gmp.h /usr/include/bak-gmp.h ln -s /usr/local/include/gmp.h /usr/include/gmp.h</li>
+<li>建立mpfr.h文件软链接 mv /usr/include/mpfr.h /usr/include/bak-mpfr.h ln -s /usr/local/include/mpfr.h /usr/include/mpfr.h </li>
+<li>建立mpc.h文件软链接 mv /usr/include/mpc.h /usr/include/bak-mpc.h ln -s /usr/local/include/mpc.h /usr/include/mpc.h </li>
+<li>find / -name ‘libgmp.<em>‘ 把输出结果中 /usr/lib/下的libgmp.</em>都备份，建立软链接到/usr/local/lib下libgmp.*相关库</li>
+</ul>
+</li>
+<li>退到上层，建立输出目录 mkdir gcc-build-4.9.3</li>
+<li>cd gcc-build-4.9.3</li>
+<li>../gcc-4.9.3/configure –enable-checking=release –enable-languages=c,c++ –disable-multilib</li>
+<li>make -j4 &amp; make install</li>
+<li>用whereis gcc命令找到系统中现存的所有gcc.然后手动一个一个用软连接替换掉指向新的gcc，g++</li>
+<li>gcc -v, g++ -v, c++ -v, cc -v 几个命令都显示是4.9.3了就行了。</li>
+<li>最后别忘了升级完gcc之后，用新版本的gcc重新编译一下gcc4.9.3，再重新make install一下就彻底完活了。</li>
+<li>libstdc++.so.6.0.17.tar.gz </li>
+</ul>
+</li>
+<li>安装subversion-1.9.3<ul>
+<li>sqlite-autoconf-3120100</li>
+</ul>
+</li>
+<li>安装clang.tar.gz</li>
+</ul>
+</li>
+</ul>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a data-url="http://yoursite.com/2016/04/19/clang/" data-id="cin7087wk0001fkeb4od289hd" class="article-share-link">分享到</a><div class="tags"><a href="/tags/代码检查/">代码检查</a></div><div class="post-nav"><a href="/2016/04/18/Resharp/" class="next">代码检查工具-Resharper++</a></div></div></div></div><div class="pure-u-1-4"><div id="sidebar"><div class="widget"><form action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" class="search-form"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://yoursite.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/代码检查/" style="font-size: 15px;">代码检查</a> <a href="/tags/nothing/" style="font-size: 15px;">nothing</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/04/19/clang/">代码检查工具-Clang Static Analyzer</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/18/Resharp/">代码检查工具-Resharper++</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/18/PVS-Studio/">代码检查工具-PVS-Studio</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/18/cppcheck/">代码检查工具-cppcheck</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/17/hello-world/">开博！！！</a></li></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">© <a href="/." rel="nofollow">一晌贪欢.</a> Powered by<a rel="nofollow" target="_blank" href="https://github.com/yysunq"> sunyu.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.css?v=0.0.0"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
